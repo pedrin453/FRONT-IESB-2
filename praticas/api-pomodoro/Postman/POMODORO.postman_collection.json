@@ -1,0 +1,240 @@
+{
+  "info": {
+    "_postman_id": "5efe3c05-74b5-4a10-92fa-2117ddb8ce2d",
+    "name": "POMODORO",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33176077",
+    "_collection_link": "https://go.postman.co/collection/33176077-5efe3c05-74b5-4a10-92fa-2117ddb8ce2d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3333/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Settings",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3333/settings",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "settings"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Settigs",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"workTime\": 30,\r\n  \"shortBreakTime\": 10,\r\n  \"longBreakTime\": 20\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3333/settings",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "settings"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tasks",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": \"123456\",\r\n  \"name\": \"Task via Postman\",\r\n  \"duration\": 30,\r\n  \"type\": \"workTime\",\r\n  \"startDate\": 1710000000000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3333/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Complete",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"completeDate\": {{$timestamp}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3333/tasks/123456/complete",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "tasks",
+            "123456",
+            "complete"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Interrupt",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"interruptDate\": 1722370000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3333/tasks/123456/interrupt",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "tasks",
+            "123456",
+            "interrupt"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Lista Task",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://localhost:3333/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Tasks",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://localhost:3333/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Confirmando Limpeza",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://localhost:3333/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3333",
+          "path": [
+            "tasks"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
