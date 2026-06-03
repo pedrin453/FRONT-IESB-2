@@ -1,3 +1,4 @@
+import { clearTasks } from '../../services/chronosApi';
 import { TrashIcon } from 'lucide-react';
 import { Container } from '../../components/Container';
 import { DefaultButton } from '../../components/DefaultButton';
@@ -44,12 +45,25 @@ export function History() {
   }, []);
 
   useEffect(() => {
+  async function clearHistory() {
     if (!confirmClearHistory) return;
 
-    setConfirmClearHistory(false);
+    try {
+      await clearTasks();
 
-    dispatch({ type: TaskActionTypes.RESET_STATE });
-  }, [confirmClearHistory, dispatch]);
+      dispatch({
+        type: TaskActionTypes.RESET_STATE,
+      });
+    } catch (error) {
+      console.error(error);
+      showMessage.error('Erro ao limpar histórico');
+    }
+
+    setConfirmClearHistory(false);
+  }
+
+  clearHistory();
+}, [confirmClearHistory, dispatch]);
 
   useEffect(() => {
     return () => {

@@ -1,3 +1,8 @@
+import {
+  createTask,
+  interruptTask,
+} from '../../services/chronosApi'; // completeTask removido, pois não estava em uso
+
 import { PlayCircleIcon, StopCircleIcon } from 'lucide-react';
 import { Cycles } from '../Cycles';
 import { DefaultButton } from '../DefaultButton';
@@ -16,7 +21,8 @@ export function MainForm() {
   const taskNameInput = useRef<HTMLInputElement>(null);
   const lastTaskName = state.tasks[state.tasks.length - 1]?.name || '';
 
-  function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
+  // Transformado em async
+  async function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     showMessage.dismiss();
 
@@ -30,7 +36,7 @@ export function MainForm() {
     }
 
     const nextCycle = getNextCycle(state.currentCycle);
-    const nextCyleType = getNextCycleType(nextCycle);
+    const nextCycleType = getNextCycleType(nextCycle); // Typo corrigido aqui
 
     const newTask: TaskModel = {
       id: Date.now().toString(),
@@ -38,18 +44,51 @@ export function MainForm() {
       startDate: Date.now(),
       completeDate: null,
       interruptDate: null,
-      duration: state.config[nextCyleType],
-      type: nextCyleType,
+      duration: state.config[nextCycleType],
+      type: nextCycleType,
     };
 
-    dispatch({ type: TaskActionTypes.START_TASK, payload: newTask });
-    showMessage.success('Tarefa iniciada');
+    try {
+      // Await adicionado para esperar a API responder antes de prosseguir
+      await createTask({
+        id: newTask.id,
+        name: newTask.name,
+        duration: newTask.duration,
+        type: newTask.type,
+        startDate: newTask.startDate,
+      });
+
+      dispatch({ type: TaskActionTypes.START_TASK, payload: newTask });
+      showMessage.success('Tarefa iniciada');
+
+      // Limpeza do input para a próxima digitação
+      taskNameInput.current.value = '';
+    } catch (error) {
+      console.error(error);
+      showMessage.error('Erro ao iniciar a tarefa na API');
+    }
   }
 
-  function handleInterruptTask() {
+  async function handleInterruptTask() {
     showMessage.dismiss();
-    showMessage.error('Tarefa interrompida!');
-    dispatch({ type: TaskActionTypes.INTERRUPT_TASK });
+
+    try {
+      if (state.activeTask) {
+        await interruptTask(
+          state.activeTask.id,
+          Date.now(),
+        );
+      }
+
+      showMessage.error('Tarefa interrompida!');
+
+      dispatch({
+        type: TaskActionTypes.INTERRUPT_TASK,
+      });
+    } catch (error) {
+      console.error(error);
+      showMessage.error('Erro ao interromper tarefa');
+    }
   }
 
   return (

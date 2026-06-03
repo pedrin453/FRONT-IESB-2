@@ -8,6 +8,7 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { useEffect, useRef } from 'react';
 import { showMessage } from '../../adapters/showMessage';
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
+import { getSettings, updateSettings } from '../../services/chronosApi';
 
 export function Settings() {
   const { state, dispatch } = useTaskContext();
@@ -17,9 +18,28 @@ export function Settings() {
 
   useEffect(() => {
     document.title = 'Configurações - Chronos Pomodoro';
-  }, []);
 
-  function handleSaveSettings(e: React.FormEvent<HTMLFormElement>) {
+    async function loadSettings() {
+      try {
+        const settings = await getSettings();
+
+        dispatch({
+          type: TaskActionTypes.CHANGE_SETTINGS,
+          payload: {
+            workTime: settings.workTime,
+            shortBreakTime: settings.shortBreakTime,
+            longBreakTime: settings.longBreakTime,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadSettings();
+  }, [dispatch]);
+
+  async function handleSaveSettings(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     showMessage.dismiss();
 
@@ -52,16 +72,28 @@ export function Settings() {
       return;
     }
 
-    dispatch({
-      type: TaskActionTypes.CHANGE_SETTINGS,
-      payload: {
+    try {
+      await updateSettings({
         workTime,
         shortBreakTime,
         longBreakTime,
-      },
-    });
-    showMessage.success('Configurações salvas');
-  }
+      });
+
+      dispatch({
+        type: TaskActionTypes.CHANGE_SETTINGS,
+        payload: {
+          workTime,
+          shortBreakTime,
+          longBreakTime,
+        },
+      });
+
+      showMessage.success('Configurações salvas');
+    } catch (error) {
+      console.error(error);
+      showMessage.error('Erro ao salvar configurações');
+    }
+  } // <-- CHAVE DE FECHAMENTO ADICIONADA AQUI
 
   return (
     <MainTemplate>
@@ -71,7 +103,7 @@ export function Settings() {
 
       <Container>
         <p style={{ textAlign: 'center' }}>
-          Modifique as configurações para tempo de foco, descanso curso e
+          Modifique as configurações para tempo de foco, descanso curto e
           descanso longo.
         </p>
       </Container>

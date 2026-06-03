@@ -1,3 +1,4 @@
+import { completeTask } from '../../services/chronosApi';
 import { useEffect, useReducer, useRef } from 'react';
 import { initialTaskState } from './initialTaskState';
 import { taskReducer } from './taskReducer';
@@ -32,26 +33,39 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   const worker = TimerWorkerManager.getInstance();
 
   useEffect(() => {
-    worker.onmessage(e => {
-      const countDownSeconds = e.data;
+  worker.onmessage(e => {
+    const countDownSeconds = e.data;
 
-      if (countDownSeconds <= 0) {
-        if (playBeepRef.current) {
-          playBeepRef.current();
-          playBeepRef.current = null;
-        }
-        dispatch({
-          type: TaskActionTypes.COMPLETE_TASK,
-        });
-        worker.terminate();
-      } else {
-        dispatch({
-          type: TaskActionTypes.COUNT_DOWN,
-          payload: { secondsRemaining: countDownSeconds },
+    if (countDownSeconds <= 0) {
+      if (playBeepRef.current) {
+        playBeepRef.current();
+        playBeepRef.current = null;
+      }
+
+      if (state.activeTask) {
+        completeTask(
+          state.activeTask.id,
+          Date.now(),
+        ).catch(error => {
+          console.error(error);
         });
       }
-    });
-  }, [worker]);
+
+      dispatch({
+        type: TaskActionTypes.COMPLETE_TASK,
+      });
+
+      worker.terminate();
+    } else {
+      dispatch({
+        type: TaskActionTypes.COUNT_DOWN,
+        payload: {
+          secondsRemaining: countDownSeconds,
+        },
+      });
+    }
+  });
+}, [state.activeTask, dispatch, worker]);
 
   useEffect(() => {
     localStorage.setItem('state', JSON.stringify(state));
